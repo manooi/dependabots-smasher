@@ -14,12 +14,21 @@ export default function Home() {
 
   const search = async (e: any) => {
     e.preventDefault();
-    const result = await getPackages(packageName);
-    setVersions(result.versions);
-    setVersionName(Object.keys(result.versions));
-    setClickedVersion('');
-    setDep({});
-    setDepSearchText('');
+    if(!packageName) {
+      alert('😡😡😡😡😡');
+      return;
+    }
+    try {
+      const result = await getPackages(packageName);
+      setVersions(result.versions);
+      setVersionName(Object.keys(result.versions));
+      setClickedVersion('');
+      setDep({});
+      setDepSearchText('');
+    }
+    catch {
+      alert('Package not found!'); 
+    }
   };
 
   const clickDep = (version: string) => {
@@ -63,7 +72,7 @@ export default function Home() {
         <form>
           <div className="inline">
             <label className="ml-2 mr-1">package</label>
-            <input className="border h-8 p-1" type="text" value={packageName} onChange={(event) => setPackageName(event.target.value)}></input>
+            <input placeholder="exact package name" className="border h-8 p-1" type="text" value={packageName} onChange={(event) => setPackageName(event.target.value)}></input>
           </div>
           {/* <div>
           <label className="ml-2 mr-1"> version </label>
@@ -81,7 +90,7 @@ export default function Home() {
           </div>
           <div className="col-span-3 border h-10">
             <h1 className="font-bold ml-4 inline">dependencies</h1>
-            <input onChange={(event) => onFilterDep(event?.target.value)} className="border h-7 p-1 ml-8 mt-1" type="text" placeholder="filter"></input>
+            <input value={depSearchText} onChange={(event) => onFilterDep(event?.target.value)} className="border h-7 p-1 ml-8 mt-1" type="text" placeholder="filter"></input>
           </div>
         </div>
       </div>
