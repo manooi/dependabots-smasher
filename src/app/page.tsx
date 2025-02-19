@@ -25,7 +25,6 @@ export default function Home() {
     setClickedVersion(version);
     const keepProps = ["name", "version", "dependencies", "devDependencies", "peerDependencies"];
     const json = versions[version];
-    console.log(json);
     const filteredJson = Object.keys(json).reduce((acc: any, key) => {
       if (keepProps.includes(key)) {
         acc[key] = json[key];
@@ -37,9 +36,17 @@ export default function Home() {
   }
 
   const onFilterDep = (name: string) => {
+    const searchProps = ["dependencies", "devDependencies", "peerDependencies"];
     let filteredVersions: string[] = [];
     for (let vName in versions) {
-      const dt = JSON.stringify(versions[vName]);
+      const json = versions[vName];
+      const filteredJson = Object.keys(versions[vName]).reduce((acc: any, key) => {
+        if (searchProps.includes(key)) {
+          acc[key] = json[key];
+        }
+        return acc;
+      }, {});
+      const dt = JSON.stringify(filteredJson);
       if (dt.includes(name)) {
         filteredVersions.push(vName);
       }
