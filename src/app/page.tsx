@@ -19,6 +19,7 @@ export default function Home() {
     setVersionName(Object.keys(result.versions));
     setClickedVersion('');
     setDep({});
+    setDepSearchText('');
   };
 
   const clickDep = (version: string) => {
@@ -69,7 +70,7 @@ export default function Home() {
           <input className="border h-8 p-1" type="text"></input>
         </div> */}
           <button type="submit" className="bg-slate-300 hover:bg-slate-400 p-1 ml-2" onClick={(event) => search(event)}>Search</button>
-          <button type="button" className="bg-red-300 hover:bg-red-400 p-1 ml-2" onClick={() => { setPackageName("") }}>Reset</button>
+          <button type="button" className="bg-red-300 hover:bg-red-400 p-1 ml-2" onClick={() => { setPackageName(""); setDepSearchText(''); }}>Reset</button>
         </form>
       </div>
 
