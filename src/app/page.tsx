@@ -1,16 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getPackages } from "./lib/npm-util";
 import Highlighter from "react-highlight-words";
+import { PackageJson, Version } from "./lib/package-json";
+import { filterJsonObjectByKeys } from "./lib/json-util";
 
 export default function Home() {
   const [packageName, setPackageName] = useState<string>("");
-  const [response, setResponse] = useState<any>({}); // kvp
-  const [versionNames, setVersionName] = useState<string[]>([]);
-  const [dep, setDep] = useState<any>({});
-  const [clickedVersion, setClickedVersion] = useState<string>("");
+  const [response, setResponse] = useState<PackageJson>({} as PackageJson);
+  const [versionNames, setVersionNames] = useState<string[]>([]);
+  const [selectedDep, setSelectedDep] = useState<any>({});
+  const [selectedVersion, setSelectedVersion] = useState<string>("");
   const [depSearchText, setDepSearchText] = useState<string>("");
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const listRef = useRef<HTMLUListElement>(null);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLUListElement>) => {
+    let newIndex = selectedIndex;
+    if(e.key == "ArrowDown") {
+      e.preventDefault();
+      newIndex = (selectedIndex + 1) % versionNames.length;
+    }
+    else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      newIndex = (selectedIndex - 1 + versionNames.length) % versionNames.length;
+    }
+    clickDep(versionNames[newIndex]);
+    setSelectedIndex(newIndex);
+
+    // Focus and ensure visibility without excessive scrolling
+    const items = listRef.current?.querySelectorAll("li");
+    const selectedItem = items?.[newIndex];
+    if (selectedItem) {
+      selectedItem.focus();
+      selectedItem.scrollIntoView({ block: "center", behavior: "instant" });
+    }
+  };
 
   const search = async (e: any) => {
     e.preventDefault();
@@ -21,9 +47,9 @@ export default function Home() {
     try {
       const result = await getPackages(packageName);
       setResponse(result);
-      setVersionName(Object.keys(result.versions));
-      setClickedVersion("");
-      setDep({});
+      setVersionNames(Object.keys(result.versions));
+      setSelectedVersion("");
+      setSelectedDep({});
       setDepSearchText("");
     } catch {
       alert("Package not found!");
@@ -31,22 +57,17 @@ export default function Home() {
   };
 
   const clickDep = (version: string) => {
-    setClickedVersion(version);
-    const keepProps = [
+    setSelectedVersion(version);
+    const keepProps: Array<keyof Version> = [
       "name",
       "version",
       "dependencies",
       "devDependencies",
       "peerDependencies",
     ];
-    const json = response?.versions[version];
-    console.log(response);
-    let filteredJson = Object.keys(json).reduce((acc: any, key) => {
-      if (keepProps.includes(key)) {
-        acc[key] = json[key];
-      }
-      return acc;
-    }, {});
+
+    const json: Version = response?.versions[version];
+    let filteredJson = filterJsonObjectByKeys<Version>(json, keepProps);
     filteredJson = {
       name: filteredJson["name"],
       version: filteredJson["version"],
@@ -54,41 +75,46 @@ export default function Home() {
       time: response["time"][version],
       ...filteredJson,
     };
-    setDep(filteredJson);
+    setSelectedDep(filteredJson);
+    setSelectedIndex(versionNames.findIndex((i) => i == version));
   };
 
   const onFilterDep = (name: string) => {
-    const searchProps = ["dependencies", "devDependencies", "peerDependencies"];
-    let filteredVersions: string[] = [];
+    const keepProps = ["dependencies", "devDependencies", "peerDependencies"];
+    const filteredVersions: string[] = [];
     for (let vName in response.versions) {
       const json = response.versions[vName];
-      const filteredJson = Object.keys(response.versions[vName]).reduce(
-        (acc: any, key) => {
-          if (searchProps.includes(key)) {
-            acc[key] = json[key];
-          }
-          return acc;
-        },
-        {}
-      );
+      const filteredJson = filterJsonObjectByKeys(json, keepProps);
       const dt = JSON.stringify(filteredJson);
       if (dt.includes(name)) {
         filteredVersions.push(vName);
       }
     }
     setDepSearchText(name);
-    setVersionName(filteredVersions);
+    setVersionNames(filteredVersions);
+  };
+
+  const onReset = () => {
+    setPackageName("");
+    setDepSearchText("");
+    setSelectedDep({});
+    setVersionNames([]);
+  };
+
+  const onClearDepSearchText = () => {
+    setDepSearchText("");
+    onFilterDep("");
   };
 
   return (
-    <div className="flex flex-col items-center pt-4 h-screen">
+    <div className="flex flex-col pt-4 h-screen w-1/1 md:w-4/5 2xl:w-1/2 mx-auto">
       <div className="flex">
         <form>
           <div className="inline">
-            <label className="ml-2 mr-1">package</label>
+            <label className="mr-1 font-bold">package</label>
             <input
               placeholder="exact package name"
-              className="border h-8 p-1"
+              className="border h-8 p-1 border-gray"
               type="text"
               value={packageName}
               onChange={(event) => setPackageName(event.target.value)}
@@ -108,10 +134,7 @@ export default function Home() {
           <button
             type="button"
             className="bg-red-300 hover:bg-red-400 p-1 ml-2"
-            onClick={() => {
-              setPackageName("");
-              setDepSearchText("");
-            }}
+            onClick={() => onReset()}
           >
             Reset
           </button>
@@ -128,10 +151,13 @@ export default function Home() {
             <input
               value={depSearchText}
               onChange={(event) => onFilterDep(event?.target.value)}
-              className="border h-7 p-1 ml-8 mt-1"
+              className="border h-7 p-1 ml-8 mt-1 border-gray"
               type="text"
               placeholder="filter"
             ></input>
+            <button className="ml-2" onClick={() => onClearDepSearchText()}>
+              clear
+            </button>
           </div>
         </div>
       </div>
@@ -139,14 +165,15 @@ export default function Home() {
       <div className="bg-slate-300 w-full h-[calc(100%-100px)]">
         <div className="grid grid-cols-4 h-full">
           <div className="col-span-1 border text-center overflow-y-scroll">
-            <ul>
+            <ul ref={listRef} onKeyDown={(e) => handleKeyDown(e)}>
               {versionNames.map((i) => (
                 <li
                   className={`cursor-pointer ${
-                    clickedVersion == i ? "bg-green-400" : ""
-                  }`}
+                    selectedVersion == i ? "bg-green-400" : ""
+                  } outline-none`}
                   key={i}
                   onClick={() => clickDep(i)}
+                  tabIndex={0}
                 >
                   {i}
                 </li>
@@ -155,11 +182,10 @@ export default function Home() {
           </div>
           <div className="col-span-3 border overflow-y-scroll">
             <pre>
-              {/* {JSON.stringify(dep, null, 4)} */}
               <Highlighter
                 searchWords={[depSearchText]}
                 autoEscape={true}
-                textToHighlight={JSON.stringify(dep, null, 4)}
+                textToHighlight={JSON.stringify(selectedDep, null, 4)}
               />
             </pre>
           </div>
