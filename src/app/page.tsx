@@ -40,6 +40,7 @@ export default function Home() {
       "peerDependencies",
     ];
     const json = response?.versions[version];
+    console.log(response);
     let filteredJson = Object.keys(json).reduce((acc: any, key) => {
       if (keepProps.includes(key)) {
         acc[key] = json[key];
@@ -49,6 +50,7 @@ export default function Home() {
     filteredJson = {
       name: filteredJson["name"],
       version: filteredJson["version"],
+      description: response["description"],
       time: response["time"][version],
       ...filteredJson,
     };
