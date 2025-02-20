@@ -14,7 +14,12 @@ export default function Home() {
   const [selectedVersion, setSelectedVersion] = useState<string>("");
   const [depSearchText, setDepSearchText] = useState<string>("");
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const packageNameRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+
+  useEffect(()=> {
+    packageNameRef?.current?.focus();
+  }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLUListElement>) => {
     let newIndex = selectedIndex;
@@ -99,6 +104,7 @@ export default function Home() {
     setDepSearchText("");
     setSelectedDep({});
     setVersionNames([]);
+    packageNameRef?.current?.focus();
   };
 
   const onClearDepSearchText = () => {
@@ -113,6 +119,7 @@ export default function Home() {
           <div className="inline">
             <label className="mr-1 font-bold">package</label>
             <input
+              ref={packageNameRef} 
               placeholder="exact package name"
               className="border h-8 p-1 border-gray"
               type="text"
@@ -129,7 +136,7 @@ export default function Home() {
             className="bg-slate-300 hover:bg-slate-400 p-1 ml-2"
             onClick={(event) => search(event)}
           >
-            Search
+            Search (Enter)
           </button>
           <button
             type="button"
