@@ -17,19 +17,31 @@ export default function Home() {
   const packageNameRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
 
-  useEffect(()=> {
+  useEffect(() => {
     packageNameRef?.current?.focus();
   }, []);
 
+  useEffect(() => {
+    // trigger once on search
+    if (versionNames.length > 0 && selectedVersion == "") {
+      clickDep(versionNames[0]);
+      const items = listRef.current?.querySelectorAll("li");
+      const selectedItem = items?.[0];
+      if (selectedItem) {
+        selectedItem.focus();
+      }
+    }
+  }, [versionNames]);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLUListElement>) => {
     let newIndex = selectedIndex;
-    if(e.key == "ArrowDown") {
+    if (e.key == "ArrowDown") {
       e.preventDefault();
       newIndex = (selectedIndex + 1) % versionNames.length;
-    }
-    else if (e.key === "ArrowUp") {
+    } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      newIndex = (selectedIndex - 1 + versionNames.length) % versionNames.length;
+      newIndex =
+        (selectedIndex - 1 + versionNames.length) % versionNames.length;
     }
     clickDep(versionNames[newIndex]);
     setSelectedIndex(newIndex);
@@ -51,12 +63,14 @@ export default function Home() {
     }
     try {
       const result = await getPackages(packageName);
+      const versions = Object.keys(result?.versions);
       setResponse(result);
-      setVersionNames(Object.keys(result.versions));
+      setVersionNames(versions);
       setSelectedVersion("");
       setSelectedDep({});
       setDepSearchText("");
-    } catch {
+    } catch (error) {
+      console.log(error);
       alert("Package not found!");
     }
   };
@@ -119,7 +133,7 @@ export default function Home() {
           <div className="inline">
             <label className="mr-1 font-bold">package</label>
             <input
-              ref={packageNameRef} 
+              ref={packageNameRef}
               placeholder="exact package name"
               className="border h-8 p-1 border-gray"
               type="text"
@@ -143,7 +157,7 @@ export default function Home() {
             className="bg-red-300 hover:bg-red-400 p-1 ml-2"
             onClick={() => onReset()}
           >
-            Reset
+            Reset (ctrl/cmd + r)
           </button>
         </form>
       </div>
