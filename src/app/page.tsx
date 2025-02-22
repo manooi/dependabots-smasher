@@ -128,10 +128,12 @@ export default function Home() {
 
   return (
     <div className="flex flex-col pt-4 h-screen w-1/1 md:w-4/5 2xl:w-1/2 mx-auto">
-      <div className="flex">
+      <div className="flex justify-between">
         <form>
           <div className="inline">
+            <img className="inline mr-2 h-[24px]" src="/Npm-logo.svg.png"></img>
             <label className="mr-1 font-bold">package</label>
+            {/* <img src="/snail.png" className=" ml-1 mr-3 inline"></img> */}
             <input
               ref={packageNameRef}
               placeholder="exact package name"
@@ -150,13 +152,14 @@ export default function Home() {
             className="bg-slate-300 hover:bg-slate-400 p-1 ml-2"
             onClick={(event) => search(event)}
           >
-            Search (Enter)
+           <img className="inline mb-1" src="/magnifier.png"></img> Search (Enter) 
           </button>
           <button
             type="button"
             className="bg-red-300 hover:bg-red-400 p-1 ml-2"
             onClick={() => onReset()}
           >
+            <img className="inline mb-1 mr-1" src="/reset-button.png"></img>
             Reset (ctrl/cmd + r)
           </button>
         </form>
