@@ -19,8 +19,13 @@ export const HeaderSection = ({
             className="border h-7 p-1 ml-8 mt-1 border-gray"
             type="text"
             placeholder="filter"
+            suppressHydrationWarning
           />
-          <button className="ml-2" onClick={onClearDepSearchText}>
+          <button 
+            className="ml-2" 
+            onClick={onClearDepSearchText}
+            suppressHydrationWarning
+          >
             clear
           </button>
         </div>

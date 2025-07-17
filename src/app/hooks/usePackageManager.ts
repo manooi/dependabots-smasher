@@ -11,6 +11,7 @@ export const usePackageManager = () => {
   const [selectedVersion, setSelectedVersion] = useState<string>("");
   const [depSearchText, setDepSearchText] = useState<string>("");
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const packageNameRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -30,6 +31,7 @@ export const usePackageManager = () => {
       alert("😡😡😡😡😡");
       return;
     }
+    setIsLoading(true);
     try {
       const result = await getPackages(packageName);
       const versions = Object.keys(result?.versions);
@@ -41,6 +43,8 @@ export const usePackageManager = () => {
     } catch (error) {
       console.log(error);
       alert("Package not found!");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -111,5 +115,6 @@ export const usePackageManager = () => {
     onFilterDep,
     onReset,
     onClearDepSearchText,
+    isLoading,
   };
 }; 

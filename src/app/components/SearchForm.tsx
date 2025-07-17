@@ -6,6 +6,7 @@ export const SearchForm = ({
   packageNameRef,
   onSearch,
   onReset,
+  isLoading,
 }: SearchFormProps) => {
   return (
     <div className="flex justify-between">
@@ -20,20 +21,26 @@ export const SearchForm = ({
             type="text"
             value={packageName}
             onChange={(event) => setPackageName(event.target.value)}
+            disabled={isLoading}
           />
         </div>
         <button
           type="submit"
-          className="bg-slate-300 hover:bg-slate-400 p-1 ml-2"
+          className={`p-1 ml-2 ${isLoading
+              ? 'bg-slate-300 cursor-not-allowed'
+              : 'bg-slate-300 hover:bg-slate-400'
+            }`}
           onClick={onSearch}
+          disabled={isLoading}
         >
-          <img className="inline mb-1" src="/magnifier.png" alt="Search" />
-          Search (Enter)
+          <img className="inline h-4 w-4 mr-1" src="/magnifier.png" alt="Search" />
+          {isLoading ? <span>Searching...</span> : <span>Search (Enter)</span>}
         </button>
         <button
           type="button"
           className="bg-red-300 hover:bg-red-400 p-1 ml-2"
           onClick={onReset}
+          disabled={isLoading}
         >
           <img className="inline mb-1 mr-1" src="/reset-button.png" alt="Reset" />
           Reset (ctrl/cmd + r)

@@ -6,6 +6,7 @@ export interface SearchFormProps {
   packageNameRef: RefObject<HTMLInputElement | null>;
   onSearch: (e: any) => void;
   onReset: () => void;
+  isLoading: boolean;
 }
 
 export interface HeaderSectionProps {
