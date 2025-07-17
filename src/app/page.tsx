@@ -39,32 +39,54 @@ export default function Home() {
   }, [versionNames, selectedVersion]);
 
   return (
-    <div className="flex flex-col pt-4 h-screen w-1/1 md:w-4/5 2xl:w-1/2 mx-auto">
-      <SearchForm
-        packageName={packageName}
-        setPackageName={setPackageName}
-        packageNameRef={packageNameRef}
-        onSearch={search}
-        onReset={onReset}
-        isLoading={isLoading}
-      />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+      <div className="max-w-7xl mx-auto">
+        {/* <div className="text-center mb-6">
+          <div className="inline-block panel-retro px-6 py-3 mb-4">
+            <h1 className="text-3xl font-bold text-gray-800 font-mono">
+              🐛 DEPENDABOTS SMASHER 🐛
+            </h1>
+            <p className="text-sm text-gray-600 mt-1 font-mono">
+              Analyze package dependencies across versions
+            </p>
+          </div>
+        </div> */}
 
-      <HeaderSection
-        depSearchText={depSearchText}
-        onFilterDep={onFilterDep}
-        onClearDepSearchText={onClearDepSearchText}
-      />
 
-      <ContentArea
-        versionNames={versionNames}
-        selectedVersion={selectedVersion}
-        selectedIndex={selectedIndex}
-        setSelectedIndex={setSelectedIndex}
-        listRef={listRef}
-        onVersionClick={clickDep}
-        selectedDep={selectedDep}
-        depSearchText={depSearchText}
-      />
+        {/* Main Content Container */}
+        <div className="panel-retro p-6 mt-5 space-y-6">
+          <SearchForm
+            packageName={packageName}
+            setPackageName={setPackageName}
+            packageNameRef={packageNameRef}
+            onSearch={search}
+            onReset={onReset}
+            isLoading={isLoading}
+          />
+
+          <HeaderSection
+            depSearchText={depSearchText}
+            onFilterDep={onFilterDep}
+            onClearDepSearchText={onClearDepSearchText}
+          />
+
+          <ContentArea
+            versionNames={versionNames}
+            selectedVersion={selectedVersion}
+            selectedIndex={selectedIndex}
+            setSelectedIndex={setSelectedIndex}
+            listRef={listRef}
+            onVersionClick={clickDep}
+            selectedDep={selectedDep}
+            depSearchText={depSearchText}
+          />
+        </div>
+
+        {/* Footer */}
+        <div className="text-center mt-6 text-sm text-gray-500 font-mono">
+          <p>Use ↑↓ arrows to navigate • Enter to select • Ctrl/Cmd+R to reset</p>
+        </div>
+      </div>
     </div>
   );
 }

@@ -8,44 +8,85 @@ export const SearchForm = ({
   onReset,
   isLoading,
 }: SearchFormProps) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSearch(e);
+  };
+
   return (
-    <div className="flex justify-between">
-      <form>
-        <div className="inline">
-          <img className="inline mr-2 h-[24px]" src="/Npm-logo.svg.png" alt="NPM Logo" />
-          <label className="mr-1 font-bold">package</label>
-          <input
-            ref={packageNameRef}
-            placeholder="exact package name"
-            className="border h-8 p-1 border-gray"
-            type="text"
-            value={packageName}
-            onChange={(event) => setPackageName(event.target.value)}
-            disabled={isLoading}
+    <div className="space-y-4">
+      <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-4">
+        <div className="flex items-center gap-2">
+          <img 
+            className="h-6" 
+            src="/Npm-logo.svg.png" 
+            alt="NPM Logo" 
           />
+          <label className="font-bold text-gray-700 font-mono text-sm">
+            package:
+          </label>
         </div>
-        <button
-          type="submit"
-          className={`p-1 ml-2 ${isLoading
-              ? 'bg-slate-300 cursor-not-allowed'
-              : 'bg-slate-300 hover:bg-slate-400'
+        
+        <input
+          ref={packageNameRef}
+          placeholder="exact package name"
+          className="input-retro min-w-[200px]"
+          type="text"
+          value={packageName}
+          onChange={(event) => setPackageName(event.target.value)}
+          disabled={isLoading}
+        />
+        
+        <div className="flex gap-2">
+          <button
+            type="submit"
+            className={`btn-retro flex items-center gap-1 ${
+              isLoading
+                ? 'opacity-50 cursor-not-allowed'
+                : 'hover:bg-blue-200 hover:border-blue-600'
             }`}
-          onClick={onSearch}
-          disabled={isLoading}
-        >
-          <img className="inline h-4 w-4 mr-1" src="/magnifier.png" alt="Search" />
-          {isLoading ? <span>Searching...</span> : <span>Search (Enter)</span>}
-        </button>
-        <button
-          type="button"
-          className="bg-red-300 hover:bg-red-400 p-1 ml-2"
-          onClick={onReset}
-          disabled={isLoading}
-        >
-          <img className="inline mb-1 mr-1" src="/reset-button.png" alt="Reset" />
-          Reset (ctrl/cmd + r)
-        </button>
+            onClick={onSearch}
+            disabled={isLoading}
+          >
+            <img 
+              className="h-4 w-4" 
+              src="/magnifier.png" 
+              alt="Search" 
+            />
+            <span className="font-mono">
+              {isLoading ? (
+                <span className="loading-cursor">Searching...</span>
+              ) : (
+                'Search (Enter)'
+              )}
+            </span>
+          </button>
+          
+          <button
+            type="button"
+            className="btn-retro flex items-center gap-1 bg-red-200 hover:bg-red-300 hover:border-red-600"
+            onClick={onReset}
+            disabled={isLoading}
+          >
+            <img 
+              className="h-4 w-4" 
+              src="/reset-button.png" 
+              alt="Reset" 
+            />
+            <span className="font-mono">Reset (Ctrl+R)</span>
+          </button>
+        </div>
       </form>
+      
+      {/* Status indicator with consistent height */}
+      <div className="content-stable">
+        {isLoading && (
+          <div className="flex items-center gap-2 text-sm text-gray-600 font-mono loading-transition">
+            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+            <span>Fetching package data...</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }; 

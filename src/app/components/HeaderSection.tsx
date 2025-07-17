@@ -6,28 +6,41 @@ export const HeaderSection = ({
   onClearDepSearchText,
 }: HeaderSectionProps) => {
   return (
-    <div className="bg-slate-300 w-full mt-4">
-      <div className="grid grid-cols-4 h-full">
-        <div className="col-span-1 border h-10">
-          <h1 className="font-bold text-center">versions</h1>
+    <div className="panel-retro">
+      <div className="grid grid-cols-4 h-12">
+        <div className="col-span-1 border-r-2 border-gray-600 bg-gray-200 flex items-center justify-center">
+          <h2 className="font-bold text-gray-800 font-mono text-sm">
+            📦 VERSIONS
+          </h2>
         </div>
-        <div className="col-span-3 border h-10">
-          <h1 className="font-bold ml-4 inline">dependencies</h1>
-          <input
-            value={depSearchText}
-            onChange={(event) => onFilterDep(event?.target.value)}
-            className="border h-7 p-1 ml-8 mt-1 border-gray"
-            type="text"
-            placeholder="filter"
-            suppressHydrationWarning
-          />
-          <button 
-            className="ml-2" 
-            onClick={onClearDepSearchText}
-            suppressHydrationWarning
-          >
-            clear
-          </button>
+        <div className="col-span-3 bg-gray-200 flex items-center gap-4 px-4">
+          <h2 className="font-bold text-gray-800 font-mono text-sm">
+            🔗 DEPENDENCIES
+          </h2>
+          <div className="flex items-center gap-2 flex-1">
+            <input
+              value={depSearchText}
+              onChange={(event) => onFilterDep(event?.target.value)}
+              className="input-retro flex-1 max-w-xs"
+              type="text"
+              placeholder="filter dependencies..."
+              suppressHydrationWarning
+            />
+            {depSearchText && (
+              <button 
+                className="btn-retro text-xs px-2 py-1 bg-yellow-200 hover:bg-yellow-300"
+                onClick={onClearDepSearchText}
+                suppressHydrationWarning
+              >
+                ✕ Clear
+              </button>
+            )}
+          </div>
+          {depSearchText && (
+            <span className="text-xs text-gray-600 font-mono">
+              {depSearchText.length} chars
+            </span>
+          )}
         </div>
       </div>
     </div>
