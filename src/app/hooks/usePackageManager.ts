@@ -12,6 +12,7 @@ export const usePackageManager = () => {
   const [depSearchText, setDepSearchText] = useState<string>("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>("");
   const packageNameRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -28,10 +29,11 @@ export const usePackageManager = () => {
   const search = async (e: any) => {
     e.preventDefault();
     if (!packageName) {
-      alert("😡😡😡😡😡");
+      setError("Please enter a package name");
       return;
     }
     setIsLoading(true);
+    setError("");
     try {
       const result = await getPackages(packageName);
       const versions = Object.keys(result?.versions);
@@ -42,7 +44,7 @@ export const usePackageManager = () => {
       setDepSearchText("");
     } catch (error) {
       console.log(error);
-      alert("Package not found!");
+      setError(`Package "${packageName}" not found`);
     } finally {
       setIsLoading(false);
     }
@@ -91,6 +93,7 @@ export const usePackageManager = () => {
     setDepSearchText("");
     setSelectedDep({});
     setVersionNames([]);
+    setError("");
     packageNameRef?.current?.focus();
   };
 
@@ -116,5 +119,6 @@ export const usePackageManager = () => {
     onReset,
     onClearDepSearchText,
     isLoading,
+    error,
   };
 }; 

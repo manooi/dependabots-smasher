@@ -7,6 +7,7 @@ export interface SearchFormProps {
   onSearch: (e: any) => void;
   onReset: () => void;
   isLoading: boolean;
+  error: string;
 }
 
 export interface HeaderSectionProps {

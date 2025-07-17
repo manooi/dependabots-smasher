@@ -23,6 +23,7 @@ export default function Home() {
     onReset,
     onClearDepSearchText,
     isLoading,
+    error,
   } = usePackageManager();
 
   const listRef = useRef<HTMLUListElement>(null);
@@ -62,6 +63,7 @@ export default function Home() {
             onSearch={search}
             onReset={onReset}
             isLoading={isLoading}
+            error={error}
           />
 
           <HeaderSection

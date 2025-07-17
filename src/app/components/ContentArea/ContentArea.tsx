@@ -13,7 +13,7 @@ export const ContentArea = ({
   depSearchText,
 }: ContentAreaProps) => {
   return (
-    <div className="panel-retro h-[600px] min-h-[600px]">
+    <div className="panel-retro h-[calc(100vh-330px)] min-h-[600px]">
       <div className="grid grid-cols-4 h-full">
         <VersionList
           versionNames={versionNames}

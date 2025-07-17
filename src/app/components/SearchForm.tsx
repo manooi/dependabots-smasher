@@ -7,6 +7,7 @@ export const SearchForm = ({
   onSearch,
   onReset,
   isLoading,
+  error,
 }: SearchFormProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,6 +85,12 @@ export const SearchForm = ({
           <div className="flex items-center gap-2 text-sm text-gray-600 font-mono loading-transition">
             <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
             <span>Fetching package data...</span>
+          </div>
+        )}
+        {error && (
+          <div className="flex items-center gap-2 text-sm text-red-600 font-mono loading-transition">
+            <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+            <span>{error}</span>
           </div>
         )}
       </div>
